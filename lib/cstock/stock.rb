@@ -24,6 +24,12 @@ module CStock
       end
     end
 
+    def description
+      FIELDS_ZH.each do |field|
+        puts field + " : " + self.send(field)
+      end
+    end
+
     BASE_HOST = "hq.sinajs.cn"
     CURRENT_INFO = "/list="
     def self.quote(stock_code)

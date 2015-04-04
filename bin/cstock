@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'cstock'
+
+if ARGV.count != 1
+  puts "With the given stock code quote its infomation."
+  puts "usage: cstock sh600000"
+  exit
+end
+
+code = ARGV[0]
+
+stock = CStock::Stock.quote(code)
+stock.description
