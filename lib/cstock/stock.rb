@@ -3,12 +3,12 @@ require 'rest-client'
 
 module CStock
   class Stock
-    FIELDS = %w(code name open_price close_price cur_price high_price low_price bid_price_1 ask_price_1 volume turnover
+    FIELDS = %w(code name open_price yesterday_close_price cur_price high_price low_price bid_price_1 ask_price_1 volume turnover
       bid_volume_1 bid_price_1 bid_volume_2 bid_price_2 bid_volume_3 bid_price_3 bid_volume_4 bid_price_4 bid_volume_5 bid_price_5
       ask_volume_1 ask_price_1 ask_volume_2 ask_price_2 ask_volume_3 ask_price_3 ask_volume_4 ask_price_4 ask_volume_5 ask_price_5
       date time)
 
-    FIELDS_ZH = %w(代码 股票名 开盘价 收盘价 当前价 今日最高 今日最低 买一价 卖一价 成交量 成交额
+    FIELDS_ZH = %w(代码 股票名 开盘价 昨日收盘价 当前价 今日最高 今日最低 买一价 卖一价 成交量 成交额
       买一挂单 买一价 买二挂单 买二价 买三挂单 买三价 买四挂单 买四价 买五挂单 买五价
       卖一挂单 卖一价 卖二挂单 卖二价 卖三挂单 卖三价 卖四挂单 卖四价 卖五挂单 卖五价
       日期 时间)
