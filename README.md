@@ -30,7 +30,7 @@ gem install cstock
 
 require 'cstock'
 
-stock = CStock::Stock.quote('600000')
+stock = CStock::Stock.new('600000')
 stock.name  #=> 浦发银行
 stock.股票名 #=> 浦发银行
 stock. open_price #=> 16.00

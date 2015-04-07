@@ -18,17 +18,31 @@ module CStock
       __send__(:alias_method, FIELDS_ZH[index].to_sym,  field.to_sym)
     end
 
-    def initialize(stock_code, data)
+    def initialize(stock_code, data=nil)
       @code = stock_code
-      return nil if data == nil
+      data = self.class.quote(stock_code) if data == nil
       FIELDS[1..-1].each_with_index do |field, index|
         instance_variable_set("@#{field}", (data[index].nil? ? nil : data[index]))
       end
+      yield self if block_given?
     end
+
 
     def description
       FIELDS_ZH.each do |field|
         puts field + " : " + self.send(field)
+      end
+    end
+
+    def refresh
+      self.class.refresh(self)
+    end
+
+    def self.refresh(stock)
+      quote(stock.code) do |data|
+        FIELDS[1..-1].each_with_index do |field, index|
+          stock.instance_variable_set("@#{field}", (data[index].nil? ? nil : data[index]))
+        end
       end
     end
 
@@ -39,9 +53,9 @@ module CStock
 
       RestClient::Request.execute(:url => url, :method => :get) do |response|
         if response.code == 200
-          s = Stock.new(stock_code, parse(response.force_encoding("GBK").encode("UTF-8")))
-          yield(s) if block_given?
-          return s
+          data = parse(response.force_encoding("GBK").encode("UTF-8"))
+          yield(data) if block_given?
+          return data
         else
           nil
         end

@@ -2,8 +2,8 @@ require 'cstock'
 require 'spec_helper'
 
 describe CStock::Stock do
-  describe 'quote' do
-    stock = CStock::Stock.quote('600000') do |s|
+  describe 'initialize' do
+    stock = CStock::Stock.new('600000') do |s|
       puts "***" + s.name
     end
     stock.description
@@ -14,6 +14,27 @@ describe CStock::Stock do
 
     it "set stock code" do
       expect(stock.code).to eq("600000")
+    end
+  end
+
+  describe "refresh" do
+    before :each do
+      @s = CStock::Stock.new('600000', %w(name open_price yesterday_close_price cur_price high_price low_price bid_price_1 ask_price_1 volume turnover
+      bid_volume_1 bid_price_1 bid_volume_2 bid_price_2 bid_volume_3 bid_price_3 bid_volume_4 bid_price_4 bid_volume_5 bid_price_5
+      ask_volume_1 ask_price_1 ask_volume_2 ask_price_2 ask_volume_3 ask_price_3 ask_volume_4 ask_price_4 ask_volume_5 ask_price_5
+      date time))
+    end
+
+    it "class method update stock attr" do
+      expect(@s.name).to eq("name")
+      CStock::Stock.refresh(@s)
+      expect(@s.name).to eq('浦发银行')
+    end
+
+    it "instance method update stock attr" do
+      expect(@s.name).to eq("name")
+      @s.refresh
+      expect(@s.name).to eq('浦发银行')
     end
   end
 end
