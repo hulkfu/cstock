@@ -3,7 +3,11 @@ require 'spec_helper'
 
 describe CStock::Stock do
   describe 'quote' do
-    stock = CStock::Stock.quote('600000')
+    stock = CStock::Stock.quote('600000') do |s|
+      puts "***" + s.name
+    end
+    stock.description
+
     it "get stock info" do
       expect(stock.name).to eq("浦发银行")
     end

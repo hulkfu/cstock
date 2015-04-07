@@ -17,5 +17,6 @@ Gem::Specification.new do |s|
   s.executables   = %w(cstock)
   s.homepage    = 'https://github.com/astonfu/cstock'
 
+  s.add_runtime_dependency 'rest-client'
   s.add_development_dependency 'rspec'
 end

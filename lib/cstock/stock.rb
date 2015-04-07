@@ -1,4 +1,5 @@
-require 'net/http'
+require 'rubygems'
+require 'rest-client'
 
 module CStock
   class Stock
@@ -31,12 +32,20 @@ module CStock
       end
     end
 
-    BASE_HOST = "hq.sinajs.cn"
-    CURRENT_INFO = "/list="
+    PREFIX_URL = "http://hq.sinajs.cn/list="
     def self.quote(stock_code)
       parsed_stock_code = parse_stock_code(stock_code)
-      data = Net::HTTP.get(BASE_HOST, CURRENT_INFO + parsed_stock_code)
-      Stock.new(stock_code, parse(data)) if data != nil
+      url = PREFIX_URL + parsed_stock_code
+
+      RestClient::Request.execute(:url => url, :method => :get) do |response|
+        if response.code == 200
+          s = Stock.new(stock_code, parse(response.force_encoding("GBK").encode("UTF-8")))
+          yield(s) if block_given?
+          return s
+        else
+          nil
+        end
+      end
     end
 
     def self.parse_stock_code(stock_code)
@@ -50,7 +59,7 @@ module CStock
         return nil
       else
         data = data[1].split(',')[0..-2]
-        data[0] = data[0][1..-1].force_encoding("GBK").encode("UTF-8")
+        data[0] = data[0][1..-1]
         return data
       end
     end
