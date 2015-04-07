@@ -5,7 +5,7 @@ Quote chinese stock infomation.
 
 It crawl infomation from "hq.sinajs.cn/list=", and include the below info:
 
-股票名 开盘价 收盘价 当前价 今日最高 今日最低 买一价 卖一价 成交量 成交额
+股票代码 股票名 开盘价 收盘价 当前价 今日最高 今日最低 买一价 卖一价 成交量 成交额
 
 买一挂单 买一价 买二挂单 买二价 买三挂单 买三价 买四挂单 买四价 买五挂单 买五价
 
@@ -15,7 +15,7 @@ It crawl infomation from "hq.sinajs.cn/list=", and include the below info:
 
 **as**
 
-name open_price close_price cur_price high_price low_price bid_price_1 ask_price_1 volume turnover
+code name open_price close_price cur_price high_price low_price bid_price_1 ask_price_1 volume turnover
 
 bid_volume_1 bid_price_1 bid_volume_2 bid_price_2 bid_volume_3 bid_price_3 bid_volume_4 bid_price_4 bid_volume_5 bid_price_5
 
@@ -30,7 +30,7 @@ gem install cstock
 
 require 'cstock'
 
-stock = CStock::Stock.quote('sh600000')
+stock = CStock::Stock.quote('600000')
 stock.name  #=> 浦发银行
 stock.股票名 #=> 浦发银行
 stock. open_price #=> 16.00
@@ -39,8 +39,9 @@ stock. open_price #=> 16.00
 ## in terminal
 
 ```bash
-% cstock sh600000
+% cstock 600000
 
+股票代码 : 600000
 股票名 : 浦发银行
 开盘价 : 16.00
 收盘价 : 16.18
