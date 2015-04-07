@@ -41,7 +41,7 @@ module CStock
     def self.refresh(stock)
       quote(stock.code) do |data|
         FIELDS[1..-1].each_with_index do |field, index|
-          stock.instance_variable_set("@#{field}", (data[index].nil? ? nil : data[index]))
+          stock.send("#{field}=".to_sym, (data[index].nil? ? nil : data[index]))
         end
       end
     end
