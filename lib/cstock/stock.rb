@@ -3,7 +3,7 @@ require 'rest-client'
 
 module CStock
   class Stock
-    FIELDS = %w(code name open_price yesterday_close_price current_price high_price low_price bid_price_1 ask_price_1 volume turnover
+    FIELDS = %w(code name open_price yesterday_close_price current_price high_price low_price bid_price ask_price volume turnover
       bid_volume_1 bid_price_1 bid_volume_2 bid_price_2 bid_volume_3 bid_price_3 bid_volume_4 bid_price_4 bid_volume_5 bid_price_5
       ask_volume_1 ask_price_1 ask_volume_2 ask_price_2 ask_volume_3 ask_price_3 ask_volume_4 ask_price_4 ask_volume_5 ask_price_5
       date time)
