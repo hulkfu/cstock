@@ -20,7 +20,7 @@ module CStock
 
     def initialize(stock_code, data=nil)
       @code = stock_code
-      data = self.class.quote(stock_code) if data == nil
+      data = self.class.quote(stock_code)[0] if data == nil
       FIELDS[1..-1].each_with_index do |field, index|
         instance_variable_set("@#{field}", (data[index].nil? ? nil : data[index]))
       end
@@ -38,24 +38,41 @@ module CStock
       self.class.refresh(self)
     end
 
-    def self.refresh(stock)
-      quote(stock.code) do |data|
-        FIELDS[1..-1].each_with_index do |field, index|
-          stock.send("#{field}=".to_sym, (data[index].nil? ? nil : data[index]))
+    ##
+    # with the given data to set the stock field values except the fires filed -- code.
+    def set_fields(data)
+      FIELDS[1..-1].each_with_index do |field, index|
+        send("#{field}=".to_sym, (data[index].nil? ? nil : data[index]))
+      end
+    end
+
+    def self.refresh(stocks)
+      stocks = [stocks] if not stocks.respond_to?(:each)
+      stock_codes = stocks.map(&:code)
+      # one quote return muti stocks data. So it saves time.
+      quote(stock_codes) do |datas|
+        datas.each_with_index do |data, index|
+          stocks[index].set_fields data
         end
       end
     end
 
     PREFIX_URL = "http://hq.sinajs.cn/list="
-    def self.quote(stock_code)
-      parsed_stock_code = parse_stock_code(stock_code)
-      url = PREFIX_URL + parsed_stock_code
+    def self.quote(stock_codes)
+      parsed_stock_codes_str = ''
+      stock_codes = [stock_codes] if not stock_codes.respond_to?(:each)
+
+      stock_codes.each do |stock_code|
+        parsed_stock_codes_str += "#{parse_stock_code(stock_code)},"
+      end
+
+      url = PREFIX_URL + parsed_stock_codes_str
 
       RestClient::Request.execute(:url => url, :method => :get) do |response|
         if response.code == 200
-          data = parse(response.force_encoding("GBK").encode("UTF-8"))
-          yield(data) if block_given?
-          return data
+          datas = parse(response.force_encoding("GBK").encode("UTF-8").strip!)
+          yield(datas) if block_given?
+          return datas
         else
           nil
         end
@@ -67,14 +84,18 @@ module CStock
       prefix + stock_code.to_s
     end
 
-    def self.parse(data)
-      data = data.split('=')
-      if data[1].length < 10
-        return nil
-      else
-        data = data[1].split(',')[0..-2]
-        data[0] = data[0][1..-1]
-        return data
+    def self.parse(datas)
+      return nil if datas.nil?
+      datas = datas.split(';').map do |data|
+        return nil if data.nil?
+        data = data.split('=')
+        if data[1].length < 10
+          nil
+        else
+          data = data[1].split(',')[0..-2]
+          data[0] = data[0][1..-1]  # fix name string
+          data
+        end
       end
     end
   end
