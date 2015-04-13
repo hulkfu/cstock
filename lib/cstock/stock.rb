@@ -42,7 +42,7 @@ module CStock
     # with the given data to set the stock field values except the fires filed -- code.
     def set_fields(data)
       FIELDS[1..-1].each_with_index do |field, index|
-        send("#{field}=".to_sym, (data[index].nil? ? nil : data[index]))
+        self.send("#{field}=".to_sym, (data[index].nil? ? nil : data[index]))
       end
     end
 
@@ -54,8 +54,9 @@ module CStock
       # one quote return muti stocks data. So it saves time.
       quote(stock_codes) do |datas|
         datas.each_with_index do |data, index|
-          stocks[index].set_fields data
-          yield stocks[index] if block_given?
+          stock = stocks[index]
+          stock.set_fields data
+          yield stock if block_given?
         end
       end
       stocks
