@@ -47,7 +47,9 @@ describe CStock::Stock do
     it "refresh muti stocks at one quote" do
       expect(@s.name).to eq("name")
       expect(@s2.name).to eq("name")
-      CStock::Stock.refresh(@stocks).each do |stock|
+      CStock::Stock.refresh(@stocks) do |s|
+        expect(s.name).not_to eq("name")
+      end.each do |stock|
         expect(@s.name).to eq("浦发银行")
         expect(@s2.name).to eq("大北农")
       end

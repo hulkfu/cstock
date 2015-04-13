@@ -46,6 +46,8 @@ module CStock
       end
     end
 
+    ##
+    # block can yield after each stock refresh
     def self.refresh(stocks)
       stocks = [stocks] if not stocks.respond_to?(:each)
       stock_codes = stocks.map(&:code)
@@ -53,6 +55,7 @@ module CStock
       quote(stock_codes) do |datas|
         datas.each_with_index do |data, index|
           stocks[index].set_fields data
+          yield stocks[index] if block_given?
         end
       end
       stocks
