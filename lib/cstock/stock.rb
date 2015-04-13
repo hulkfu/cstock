@@ -55,6 +55,7 @@ module CStock
           stocks[index].set_fields data
         end
       end
+      stocks
     end
 
     PREFIX_URL = "http://hq.sinajs.cn/list="
