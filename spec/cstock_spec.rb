@@ -57,4 +57,24 @@ describe CStock::Stock do
       expect(@s2.name).to eq("大北农")
     end
   end
+
+  describe "unexist stock" do
+    it "check stock exist?" do
+      expect(CStock::Stock.exists?("1")).to eq(false)
+      expect(CStock::Stock.exists?("600000")).to eq(true)
+    end
+
+    it "init unexist stock" do
+      s = CStock::Stock.new("1")
+      expect(s.name).to eq(nil)
+    end
+
+    it "refresh two stocks: one exist, one not" do
+      s1 = CStock::Stock.new("1")
+      s2 = CStock::Stock.new("600000")
+      CStock::Stock.refresh([s1,s2])
+      expect(s1.name).to eq(nil)
+      expect(s2.name).to eq("浦发银行")
+    end
+  end
 end

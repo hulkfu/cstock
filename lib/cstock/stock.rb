@@ -22,7 +22,7 @@ module CStock
       @code = stock_code
       data = self.class.quote(stock_code)[0] if data == nil
       FIELDS[1..-1].each_with_index do |field, index|
-        instance_variable_set("@#{field}", (data[index].nil? ? nil : data[index]))
+        instance_variable_set("@#{field}", ((data.nil? or data[index].nil?) ? nil : data[index]))
       end
       yield self if block_given?
     end
@@ -30,7 +30,7 @@ module CStock
 
     def description
       FIELDS_ZH.each do |field|
-        puts field + " : " + self.send(field)
+        puts field + " : " + self.send(field).to_s
       end
     end
 
@@ -42,7 +42,7 @@ module CStock
     # with the given data to set the stock field values except the fires filed -- code.
     def set_fields(data)
       FIELDS[1..-1].each_with_index do |field, index|
-        self.send("#{field}=".to_sym, (data[index].nil? ? nil : data[index]))
+        self.send("#{field}=".to_sym, ((data.nil? or data[index].nil?) ? nil : data[index]))
       end
     end
 
@@ -102,6 +102,10 @@ module CStock
           data
         end
       end
+    end
+
+    def self.exists?(stock_code)
+      quote(stock_code)[0] ? true : false
     end
   end
 end
