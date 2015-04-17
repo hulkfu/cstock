@@ -34,7 +34,15 @@ stock = CStock::Stock.new('600000')
 stock.name  #=> 浦发银行
 stock.股票名 #=> 浦发银行
 stock. open_price #=> 16.00
+
+# refresh data
+stock.refresh
+
+# refresh multi stocks at one quote
+CStock::Stock.refresh([stock1, stock2])
 ```
+
+Read spec for more usage.
 
 ## in terminal
 
@@ -77,5 +85,4 @@ stock. open_price #=> 16.00
 ```
 # TODO
 
-* stock code without 'sh' or 'ss'
 * more indicator
