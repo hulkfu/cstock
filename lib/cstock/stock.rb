@@ -85,6 +85,7 @@ module CStock
     end
 
     def self.parse_stock_code(stock_code)
+      return "sz0" if /^\d{6}$/.match(stock_code).nil?  # so it can continue quote and return nil
       prefix = (stock_code.to_i < 600000) ? "sz" : "sh"
       prefix + stock_code.to_s
     end

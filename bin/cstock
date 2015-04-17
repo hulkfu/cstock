@@ -11,4 +11,10 @@ end
 code = ARGV[0]
 
 stock = CStock::Stock.new(code)
-stock.description
+
+if stock.name.nil?
+  puts "没有这支股票!"
+  puts "No This Stock!"
+else
+  stock.description
+end

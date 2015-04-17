@@ -35,6 +35,10 @@ stock.name  #=> 浦发银行
 stock.股票名 #=> 浦发银行
 stock. open_price #=> 16.00
 
+# wrong stock code, its attrs will be nil
+stock = CStock::Stock.new('错误的')
+stock.name   #=> nil
+
 # refresh data
 stock.refresh
 

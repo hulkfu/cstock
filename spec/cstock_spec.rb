@@ -77,4 +77,13 @@ describe CStock::Stock do
       expect(s2.name).to eq("浦发银行")
     end
   end
+
+  describe "wrong stock code" do
+    it "return nil when refresh" do
+      s = CStock::Stock.new("1")
+      expect(s.name).to eq(nil)
+      s = CStock::Stock.new("错误")
+      expect(s.name).to eq(nil)
+    end
+  end
 end
