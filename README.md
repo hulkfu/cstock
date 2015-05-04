@@ -15,7 +15,7 @@ It crawl infomation from "hq.sinajs.cn/list=", and include the below info:
 
 **as**
 
-code name open_price yesterday_close_price cur_price high_price low_price bid_price ask_price volume turnover
+code name open_price yesterday_close_price current_price high_price low_price bid_price ask_price volume turnover
 
 bid_volume_1 bid_price_1 bid_volume_2 bid_price_2 bid_volume_3 bid_price_3 bid_volume_4 bid_price_4 bid_volume_5 bid_price_5
 
