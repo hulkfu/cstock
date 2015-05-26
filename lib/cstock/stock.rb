@@ -46,67 +46,69 @@ module CStock
       end
     end
 
-    ##
-    # block can yield after each stock refresh
-    def self.refresh(stocks)
-      stocks = [stocks] if not stocks.respond_to?(:each)
-      stock_codes = stocks.map(&:code)
-      # one quote return muti stocks data. So it saves time.
-      quote(stock_codes) do |datas|
-        datas.each_with_index do |data, index|
-          stock = stocks[index]
-          stock.set_fields data
-          yield stock if block_given?
+    class << self
+      ##
+      # block can yield after each stock refresh
+      def refresh(stocks)
+        stocks = [stocks] if not stocks.respond_to?(:each)
+        stock_codes = stocks.map(&:code)
+        # one quote return muti stocks data. So it saves time.
+        quote(stock_codes) do |datas|
+          datas.each_with_index do |data, index|
+            stock = stocks[index]
+            stock.set_fields data
+            yield stock if block_given?
+          end
+        end
+        stocks
+      end
+
+      PREFIX_URL = "http://hq.sinajs.cn/list="
+      def quote(stock_codes)
+        parsed_stock_codes_str = ''
+        stock_codes = [stock_codes] if not stock_codes.respond_to?(:each)
+
+        stock_codes.each do |stock_code|
+          parsed_stock_codes_str += "#{parse_stock_code(stock_code)},"
+        end
+
+        url = PREFIX_URL + parsed_stock_codes_str
+
+        RestClient::Request.execute(:url => url, :method => :get) do |response|
+          if response.code == 200
+            datas = parse(response.force_encoding("GBK").encode("UTF-8").strip!)
+            yield(datas) if block_given?
+            return datas
+          else
+            nil
+          end
         end
       end
-      stocks
-    end
 
-    PREFIX_URL = "http://hq.sinajs.cn/list="
-    def self.quote(stock_codes)
-      parsed_stock_codes_str = ''
-      stock_codes = [stock_codes] if not stock_codes.respond_to?(:each)
-
-      stock_codes.each do |stock_code|
-        parsed_stock_codes_str += "#{parse_stock_code(stock_code)},"
+      def parse_stock_code(stock_code)
+        return "sz0" if /^\d{6}$/.match(stock_code).nil?  # so it can continue quote and return nil
+        prefix = (stock_code.to_i < 600000) ? "sz" : "sh"
+        prefix + stock_code.to_s
       end
 
-      url = PREFIX_URL + parsed_stock_codes_str
-
-      RestClient::Request.execute(:url => url, :method => :get) do |response|
-        if response.code == 200
-          datas = parse(response.force_encoding("GBK").encode("UTF-8").strip!)
-          yield(datas) if block_given?
-          return datas
-        else
-          nil
+      def parse(datas)
+        return nil if datas.nil?
+        datas = datas.split(';').map do |data|
+          return nil if data.nil?
+          data = data.split('=')
+          if data[1].length < 10
+            nil
+          else
+            data = data[1].split(',')[0..-2]
+            data[0] = data[0][1..-1]  # fix name string
+            data
+          end
         end
       end
-    end
 
-    def self.parse_stock_code(stock_code)
-      return "sz0" if /^\d{6}$/.match(stock_code).nil?  # so it can continue quote and return nil
-      prefix = (stock_code.to_i < 600000) ? "sz" : "sh"
-      prefix + stock_code.to_s
-    end
-
-    def self.parse(datas)
-      return nil if datas.nil?
-      datas = datas.split(';').map do |data|
-        return nil if data.nil?
-        data = data.split('=')
-        if data[1].length < 10
-          nil
-        else
-          data = data[1].split(',')[0..-2]
-          data[0] = data[0][1..-1]  # fix name string
-          data
-        end
+      def exists?(stock_code)
+        quote(stock_code)[0] ? true : false
       end
-    end
-
-    def self.exists?(stock_code)
-      quote(stock_code)[0] ? true : false
     end
   end
 end
