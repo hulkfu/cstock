@@ -50,7 +50,7 @@ module CStock
       ##
       # block can yield after each stock refresh
       def refresh(stocks)
-        stocks = [stocks] if not stocks.respond_to?(:each)
+        stocks = Array(stocks)
         stock_codes = stocks.map(&:code)
         # one quote return muti stocks data. So it saves time.
         quote(stock_codes) do |datas|
@@ -66,7 +66,7 @@ module CStock
       PREFIX_URL = "http://hq.sinajs.cn/list="
       def quote(stock_codes)
         parsed_stock_codes_str = ''
-        stock_codes = [stock_codes] if not stock_codes.respond_to?(:each)
+        stock_codes = Array(stock_codes)
 
         stock_codes.each do |stock_code|
           parsed_stock_codes_str += "#{parse_stock_code(stock_code)},"
